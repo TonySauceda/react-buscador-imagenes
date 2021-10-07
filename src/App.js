@@ -1,15 +1,28 @@
 import { Formik, Form, Field } from 'formik'
+import { useState } from 'react'
 import './header.css'
 
 const App = () => {
+	const [photos, setPhotos] = useState([])
+	console.log(photos)
 	return (
 		<div>
 			<header>
 				<Formik
 					initialValues={{ search: '' }}
 					onSubmit={async (values) => {
-						// Llamar a la api de unsplash
-						console.log(values)
+						const api_key = process.env.REACT_APP_UNSPLASH_ACCESS_KEY
+						const url = 'https://api.unsplash.com/search/photos'
+						const pageSize = 20
+						const response = await fetch(`${url}?per_page=${pageSize}&query=${values.search}`, {
+							headers: {
+								Authorization: `Client-ID ${api_key}`,
+							},
+						})
+
+						const data = await response.json()
+						setPhotos(data.results)
+						console.log(photos)
 					}}
 				>
 					<Form>
